@@ -88,7 +88,7 @@ function initInfographic() {
     container: `#${containerId}`,
     width: BASE_WIDTH,
     height: BASE_HEIGHT,
-    editable: false,
+    editable: true,
   })
 
   if (props.syntax) {

@@ -9,14 +9,17 @@ importers:
   .:
     dependencies:
       '@antv/infographic':
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.1.0(vue@3.5.26(typescript@5.9.3))
+      '@zumer/snapdom':
+        specifier: ^2.0.1
+        version: 2.0.1
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -26,9 +29,6 @@ importers:
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
-      html2canvas:
-        specifier: ^1.4.1
-        version: 1.4.1
       jspdf:
         specifier: ^3.0.4
         version: 3.0.4
@@ -221,6 +221,9 @@ packages:
 
   '@antv/infographic@0.2.1':
     resolution: {integrity: sha512-JxGeXt6zOxujlA7LkXqi7ncQCo9GwiSXHrgqO5Czq2w6v7uyhprMCYsDzEre1HdESzHB43AucJVR6I9nrhxbxw==}
+
+  '@antv/infographic@0.2.2':
+    resolution: {integrity: sha512-hXhYzu6hdte9J7Q/32in0PXaicMF/cPq54yPMWalcxwSa0CVtoJS88V7XSRqr12/tR9vPUibXuYm7W7V7+sPYA==}
 
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
@@ -863,6 +866,9 @@ packages:
     resolution: {integrity: sha512-EcKxtYvn6gx1F8z9J5/rsg3+lTQnvOruQd8fUecW99DCK04BkWD7z5KQ/wTAx+DazyoEE9dJt/zV8OIEQbM6kw==}
     peerDependencies:
       vue: ^3.5.0
+
+  '@zumer/snapdom@2.0.1':
+    resolution: {integrity: sha512-78/qbYl2FTv4H6qaXcNfAujfIOSzdvs83NW63VbyC9QA3sqNPfPvhn4xYMO6Gy11hXwJUEhd0z65yKiNzDwy9w==}
 
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
@@ -1762,6 +1768,19 @@ snapshots:
       round-polygon: 0.6.7
       tinycolor2: 1.6.0
 
+  '@antv/infographic@0.2.2':
+    dependencies:
+      '@antv/hierarchy': 0.7.1
+      css: 3.0.0
+      culori: 4.0.2
+      d3: 7.9.0
+      flru: 1.0.2
+      lodash-es: 4.17.22
+      measury: 0.1.4
+      roughjs: 4.6.6
+      round-polygon: 0.6.7
+      tinycolor2: 1.6.0
+
   '@babel/helper-string-parser@7.27.1': {}
 
   '@babel/helper-validator-identifier@7.28.5': {}
@@ -2323,6 +2342,8 @@ snapshots:
   '@vueuse/shared@14.1.0(vue@3.5.26(typescript@5.9.3))':
     dependencies:
       vue: 3.5.26(typescript@5.9.3)
+
+  '@zumer/snapdom@2.0.1': {}
 
   acorn@8.15.0: {}
 

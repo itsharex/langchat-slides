@@ -107,3 +107,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+[id^="slide-container-"] *,
+[id^="slide-container-"] ::before,
+[id^="slide-container-"] ::after {
+  border: none !important;
+}

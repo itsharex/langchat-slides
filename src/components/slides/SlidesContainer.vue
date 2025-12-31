@@ -5,10 +5,11 @@ import SlideThumbnail from './SlideThumbnail.vue'
 import {Button} from '@/components/ui/button'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Download, Image, LayoutTemplate, ListPlus, Loader2, PlusCircle, RefreshCw, Trash2} from 'lucide-vue-next'
-import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import {useI18n} from '@/composables/useI18n'
 import CustomSlideDialog from '@/components/layout/CustomSlideDialog.vue'
+import {snapdom} from "@zumer/snapdom";
+import {downloadPng} from "@/lib/download.ts";
 
 type ExportFormat = 'png' | 'pdf'
 
@@ -17,37 +18,45 @@ const { t } = useI18n()
 
 async function handleDownload(format: ExportFormat) {
   if (!store.currentSlide) return
-  
+
   const element = document.getElementById(`slide-container-${store.currentSlide.id}`)
   if (!element) return
 
   try {
-    const canvas = await html2canvas(element as HTMLElement, {
-      scale: 2,
-      useCORS: true
-    })
-
     if (format === 'pdf') {
-      const imgData = canvas.toDataURL('image/png')
-      const pdf = new jsPDF({
-        orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+      // 使用 snapdom 静态方法导出为 PNG 图片
+      const img = await snapdom.toPng(element, {
+        scale: 2,
+        quality: 1,
+        embedFonts: true,
       })
-      
-      const imgProps = pdf.getImageProperties(imgData)
+
+      // 创建 PDF
+      const pdf = new jsPDF({
+        orientation: img.width > img.height ? 'landscape' : 'portrait',
+      })
+
+      // 计算 PDF 页面中的图片尺寸，保持宽高比
       const pdfWidth = pdf.internal.pageSize.getWidth()
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      const pdfHeight = (img.height * pdfWidth) / img.width
+
+      // 将图片转换为 data URL
+      const canvas = await snapdom.toCanvas(element, {
+        scale: 2,
+        quality: 1,
+        embedFonts: true,
+      })
+      const dataUrl = canvas.toDataURL('image/png')
+
+      // 添加图片到 PDF
+      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight)
       pdf.save(`slide-${store.currentSlideIndex + 1}.pdf`)
     } else {
-      const link = document.createElement('a')
-      link.download = `slide-${store.currentSlideIndex + 1}.png`
-      link.href = canvas.toDataURL('image/png')
-      link.click()
+      await downloadPng(undefined, element)
     }
   } catch (e) {
     console.error('Export failed:', e)
-    alert('Export failed. See console.')
+    alert('Export failed. See console for details.')
   }
 }
 </script>
