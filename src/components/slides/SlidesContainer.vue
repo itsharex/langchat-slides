@@ -1,64 +1,13 @@
 <script lang="ts" setup>
 import {useAppStore} from '@/stores/useAppStore'
-import SlidePreview from './SlidePreview.vue'
 import SlideThumbnail from './SlideThumbnail.vue'
-import {Button} from '@/components/ui/button'
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
-import {Download, Image, LayoutTemplate, ListPlus, Loader2, PlusCircle, RefreshCw, Trash2} from 'lucide-vue-next'
-import jsPDF from 'jspdf'
+import SlidesHeader from './SlidesHeader.vue'
+import SlidesCanvas from './SlidesCanvas.vue'
+import {LayoutTemplate, PlusCircle} from 'lucide-vue-next'
 import {useI18n} from '@/composables/useI18n'
-import CustomSlideDialog from '@/components/layout/CustomSlideDialog.vue'
-import {snapdom} from "@zumer/snapdom";
-import {downloadPng} from "@/lib/download.ts";
-
-type ExportFormat = 'png' | 'pdf'
 
 const store = useAppStore()
 const { t } = useI18n()
-
-async function handleDownload(format: ExportFormat) {
-  if (!store.currentSlide) return
-
-  const element = document.getElementById(`slide-container-${store.currentSlide.id}`)
-  if (!element) return
-
-  try {
-    if (format === 'pdf') {
-      // 使用 snapdom 静态方法导出为 PNG 图片
-      const img = await snapdom.toPng(element, {
-        scale: 2,
-        quality: 1,
-        embedFonts: true,
-      })
-
-      // 创建 PDF
-      const pdf = new jsPDF({
-        orientation: img.width > img.height ? 'landscape' : 'portrait',
-      })
-
-      // 计算 PDF 页面中的图片尺寸，保持宽高比
-      const pdfWidth = pdf.internal.pageSize.getWidth()
-      const pdfHeight = (img.height * pdfWidth) / img.width
-
-      // 将图片转换为 data URL
-      const canvas = await snapdom.toCanvas(element, {
-        scale: 2,
-        quality: 1,
-        embedFonts: true,
-      })
-      const dataUrl = canvas.toDataURL('image/png')
-
-      // 添加图片到 PDF
-      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight)
-      pdf.save(`slide-${store.currentSlideIndex + 1}.pdf`)
-    } else {
-      await downloadPng(undefined, element)
-    }
-  } catch (e) {
-    console.error('Export failed:', e)
-    alert('Export failed. See console for details.')
-  }
-}
 </script>
 
 <template>
@@ -93,104 +42,10 @@ async function handleDownload(format: ExportFormat) {
     <!-- Main Area -->
     <div class="flex-1 flex flex-col h-full overflow-hidden relative bg-card">
       <!-- Toolbar -->
-      <div class="h-14 flex items-center justify-between px-6 bg-card transition-colors duration-300">
-        <div class="text-sm font-medium text-muted-foreground">
-          {{ store.currentSlide?.title || t('preview').value }}
-        </div>
-        <div class="flex items-center gap-2">
-          <CustomSlideDialog />
-          
-          <Button 
-             :title="store.slideRenderMode === 'replace' ? t('currentReplaceMode').value : t('currentAppendMode').value"
-             class="h-8 gap-2"
-             size="sm"
-             variant="ghost"
-             @click="store.slideRenderMode = store.slideRenderMode === 'replace' ? 'append' : 'replace'"
-          >
-             <RefreshCw v-if="store.slideRenderMode === 'replace'" class="h-4 w-4" />
-             <ListPlus v-else class="h-4 w-4" />
-             <span class="text-xs">{{ store.slideRenderMode === 'replace' ? t('replaceMode').value : t('appendMode').value }}</span>
-          </Button>
-
-          <Button 
-            :title="t('clearAllSlides').value"
-            class="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-            size="icon"
-            variant="ghost"
-            @click="store.clearSlides"
-          >
-            <Trash2 class="h-4 w-4" />
-          </Button>
-          
-          <div class="w-px h-4 bg-border/50 mx-1"></div>
-
-          <div class="flex items-center gap-2">
-            <Select>
-              <SelectTrigger class="h-8">
-                <Download class="h-4 w-4" />
-                <SelectValue :placeholder="t('exportFormat').value" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="png" @click="handleDownload('png')">
-                  <div class="flex items-center gap-2">
-                    <Image class="h-3.5 w-3.5" />
-                    <span>{{ t('exportPng').value }}</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="pdf" @click="handleDownload('pdf')">
-                  <div class="flex items-center gap-2">
-                    <Download class="h-3.5 w-3.5" />
-                    <span>{{ t('exportPdf').value }}</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <SlidesHeader />
 
       <!-- Preview -->
-      <div class="flex-1 p-4 bg-muted/20 overflow-hidden flex items-center justify-center relative">
-        <Transition mode="out-in" name="fade">
-          <div 
-            v-if="store.currentSlide"
-            :key="store.currentSlide.id"
-            class="w-full h-full bg-background rounded-xl overflow-hidden relative border border-border/50 shadow-sm"
-          >
-             <SlidePreview 
-               :id="store.currentSlide.id"
-               :syntax="store.currentSlide.syntax"
-             />
-          </div>
-          <div v-else class="flex flex-col items-center justify-center h-full text-muted-foreground gap-3">
-             <div class="bg-muted p-4 rounded-full">
-               <LayoutTemplate class="h-10 w-10 text-muted-foreground/50" />
-             </div>
-             <p class="font-medium">{{ t('readyToCreate').value }}</p>
-             <p class="text-sm text-muted-foreground/70">{{ t('waitingPlaceholder').value }}</p>
-          </div>
-        </Transition>
-
-        <!-- Loading Overlay -->
-        <Transition name="fade">
-          <div v-if="store.isStreaming" class="absolute top-6 right-6 bg-background/90 backdrop-blur-md border border-border rounded-full px-4 py-2 flex items-center gap-2.5 shadow-sm z-50">
-             <Loader2 class="h-4 w-4 animate-spin text-primary" />
-             <span class="text-xs font-medium text-foreground">{{ t('rendering').value }}</span>
-          </div>
-        </Transition>
-      </div>
+      <SlidesCanvas />
     </div>
   </div>
 </template>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

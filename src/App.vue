@@ -1,8 +1,33 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import Header from '@/components/layout/Header.vue'
 import ChatContainer from '@/components/chat/ChatContainer.vue'
 import SlidesContainer from '@/components/slides/SlidesContainer.vue'
+import CodeEditorPanel from '@/components/slides/CodeEditorPanel.vue'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { useAppStore } from '@/stores/useAppStore'
+import { applyThemeToSyntax } from '@/lib/slide-utils'
+
+const store = useAppStore()
+
+// Watch for the first slide to be added and open the code editor automatically
+watch(() => store.slides.length, (newLength, oldLength) => {
+  if (newLength > 0 && oldLength === 0) {
+    store.showCodeEditor = true
+  }
+})
+
+// Watch for theme/style changes and update the current slide syntax
+watch(
+  () => [store.currentTheme, store.currentPalette, store.sketchStyle, store.customPalette],
+  () => {
+    if (store.currentSlide) {
+      const newSyntax = applyThemeToSyntax(store.currentSlide.syntax, store)
+      store.updateCurrentSlideSyntax(newSyntax)
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <template>
@@ -15,7 +40,12 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
       <ResizablePanelGroup direction="horizontal" class="h-full rounded-xl overflow-visible gap-2">
         
         <ResizablePanel :default-size="30" :min-size="25" :max-size="45" class="bg-card rounded-xl border border-border/50 overflow-hidden">
-          <ChatContainer />
+          <div class="h-full w-full relative">
+            <ChatContainer />
+            <div v-if="store.showCodeEditor" class="absolute inset-0 z-20 p-4 pointer-events-none flex flex-col">
+              <CodeEditorPanel class="w-full h-full pointer-events-auto" />
+            </div>
+          </div>
         </ResizablePanel>
         
         <ResizableHandle with-handle class="w-1 bg-transparent hover:bg-primary/20 transition-colors rounded-full" />

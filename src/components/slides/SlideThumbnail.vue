@@ -1,14 +1,31 @@
 <script lang="ts" setup>
 import type {Slide} from '@/types'
 import {useI18n} from '@/composables/useI18n'
+import {useAppStore} from '@/stores/useAppStore'
+import {computed} from 'vue'
 
 const { t } = useI18n()
+const store = useAppStore()
 
-defineProps<{
+const props = defineProps<{
   slide: Slide
   isActive: boolean
   index: number
 }>()
+
+// Extract title from syntax content
+const extractedTitle = computed(() => {
+  // If this is the active slide, try to get the title from the live infographic instance
+  if (props.isActive && store.infographic) {
+    const options = store.infographic.getOptions()
+    if (options?.data?.title) {
+      return options.data.title
+    }
+  }
+
+  // Fallback to the stored title or 'Untitled'
+  return props.slide.title || 'Untitled'
+})
 </script>
 
 <template>
@@ -18,7 +35,7 @@ defineProps<{
   >
     <div class="text-[10px] text-muted-foreground font-mono mb-1">{{ t('slide').value }} {{ index + 1 }}</div>
     <div class="flex-1 flex items-center justify-center text-xs text-center font-semibold break-words px-1 text-foreground">
-      {{ slide.title || 'Untitled' }}
+      {{ extractedTitle }}
     </div>
   </div>
 </template>

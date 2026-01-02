@@ -70,10 +70,10 @@ const { t } = useI18n()
                     </a>
                   </NavigationMenuLink>
                   <NavigationMenuLink as-child>
-                    <a href="#">
+                    <a href="https://gitee.com/langchat/langchat-slides">
                       <div class="font-medium">Gitee</div>
                       <div class="text-muted-foreground">
-                        Read our latest blog posts.
+                        https://gitee.com/langchat/langchat-slides
                       </div>
                     </a>
                   </NavigationMenuLink>

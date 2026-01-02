@@ -45,6 +45,7 @@
   "exportFormat": "导出",
   "exportPng": "PNG 图片",
   "exportJpg": "JPG 图片",
+  "exportSvg": "SVG 图片",
   "exportWebp": "WebP 图片",
   "exportSvg": "SVG 矢量图",
   "exportPdf": "PDF 文档",
@@ -57,6 +58,12 @@
   "append": "追加",
   "slideSyntax": "幻灯片语法",
   "slideSyntaxPlaceholder": "输入幻灯片语法，例如：\n\n[slide]infographic list-row-horizontal-icon-arrow\ndata\n  title 我的幻灯片\n  desc 幻灯片描述\n  items\n    - label 项目 1\n      desc 描述 1\n      icon mdi/web\n    - label 项目 2\n      desc 描述 2\n      icon mdi/star[/slide]",
+  "openCodeEditor": "打开代码编辑器",
+  "closeCodeEditor": "关闭代码编辑器",
   "cancel": "取消",
-  "render": "渲染"
+  "render": "渲染",
+  "renderError": "渲染失败",
+  "renderErrorDesc": "幻灯片内容存在语法错误",
+  "checkSyntax": "请检查语法后重试",
+  "renderingFailed": "渲染失败，请查看控制台详情"
 }

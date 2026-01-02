@@ -45,6 +45,7 @@
   "exportFormat": "Download",
   "exportPng": "PNG Image",
   "exportJpg": "JPG Image",
+  "exportSvg": "SVG Image",
   "exportWebp": "WebP Image",
   "exportSvg": "SVG Vector",
   "exportPdf": "PDF Document",
@@ -57,6 +58,12 @@
   "append": "Append",
   "slideSyntax": "Slide Syntax",
   "slideSyntaxPlaceholder": "Enter slide syntax, e.g.:\n\n[slide]infographic list-row-horizontal-icon-arrow\ndata\n  title My Slide\n  desc Slide description\n  items\n    - label Item 1\n      desc Description 1\n      icon mdi/web\n    - label Item 2\n      desc Description 2\n      icon mdi/star[/slide]",
+  "openCodeEditor": "Open Code Editor",
+  "closeCodeEditor": "Close Code Editor",
   "cancel": "Cancel",
-  "render": "Render"
+  "render": "Render",
+  "renderError": "Rendering Failed",
+  "renderErrorDesc": "Syntax error in slide content",
+  "checkSyntax": "Please check the syntax and try again",
+  "renderingFailed": "Render failed, see console for details"
 }

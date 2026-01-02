@@ -178,7 +178,7 @@ function reRender() {
         <div 
           v-if="showExpandControl && message.role === 'assistant'"
           class="absolute bottom-0 left-0 right-0 flex items-end justify-center cursor-pointer hover:bg-black/5 transition-colors z-10"
-          :class="isExpanded ? 'h-6 bg-muted/80 backdrop-blur-[1px]' : 'h-20 bg-gradient-to-t from-muted via-muted/90 to-transparent'"
+          :class="isExpanded ? 'h-5 bg-muted/80 backdrop-blur-[1px]' : 'h-12 bg-gradient-to-t from-muted via-muted/90 to-transparent'"
           @click="toggleExpand"
         >
            <div class="mb-1 flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity">

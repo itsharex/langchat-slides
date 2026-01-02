@@ -113,3 +113,6 @@
 [id^="slide-container-"] ::after {
   border: none !important;
 }
+[id^="slide-container-"] span {
+  width: 102% !important;
+}
