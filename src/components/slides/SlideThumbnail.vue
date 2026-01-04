@@ -19,7 +19,7 @@ const extractedTitle = ref('Untitled')
 watch(
     () => [store.slides],
     () => {
-      extractedTitle.value = store.slides[props.index].title
+      extractedTitle.value = store.slides[props.index]!.title!
     },
     { deep: true }
 )
