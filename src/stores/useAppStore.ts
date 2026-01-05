@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia'
-import { computed, ref, shallowRef } from 'vue'
-import { useDark, useStorage, useToggle } from '@vueuse/core'
-import { type Message, type Slide } from '@/types'
-import { Infographic } from '@antv/infographic'
+import {defineStore} from 'pinia'
+import {computed, ref, shallowRef} from 'vue'
+import {useDark, useStorage, useToggle} from '@vueuse/core'
+import {type Message, type Slide} from '@/types'
+import {Infographic} from '@antv/infographic'
 
 export const useAppStore = defineStore('app-store', () => {
   // --- UI State ---
@@ -16,7 +16,7 @@ export const useAppStore = defineStore('app-store', () => {
     attribute: 'class',
     valueDark: 'dark',
     valueLight: 'light',
-    initialValue: 'dark', // Prefer dark
+    initialValue: 'light', // Prefer dark
   })
   const toggleDark = useToggle(isDark)
 
