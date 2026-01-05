@@ -119,13 +119,11 @@ interface AIConfig {
 }
 
 export function useAI() {
-  
-  async function* streamChat(messages: { role: string; content: string }[], config: AIConfig) {
+
+  async function* streamChat(messages: { role: string; content: string }[], config: AIConfig, theme?: string) {
     if (!config.apiKey) {
       throw new Error('API Key is missing. Please check settings.')
     }
-
-    console.log(config)
 
     const client = new OpenAI({
       apiKey: config.apiKey,
@@ -136,7 +134,7 @@ export function useAI() {
     const stream = await client.chat.completions.create({
       model: config.model,
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: theme ? `${SYSTEM_PROMPT}\n\nUser selected template/theme: ${theme}` : SYSTEM_PROMPT },
         ...messages.map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
       ],
       stream: true,

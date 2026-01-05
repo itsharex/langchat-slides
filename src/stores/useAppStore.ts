@@ -1,15 +1,15 @@
-import {defineStore} from 'pinia'
-import {computed, ref, shallowRef} from 'vue'
-import {useDark, useStorage, useToggle} from '@vueuse/core'
-import {type Message, type Slide} from '@/types'
-import {Infographic} from '@antv/infographic'
+import { defineStore } from 'pinia'
+import { computed, ref, shallowRef } from 'vue'
+import { useDark, useStorage, useToggle } from '@vueuse/core'
+import { type Message, type Slide } from '@/types'
+import { Infographic } from '@antv/infographic'
 
 export const useAppStore = defineStore('app-store', () => {
   // --- UI State ---
   // Load default locale from environment variable
   const defaultLocale = (import.meta.env.VITE_DEFAULT_LOCALE || 'zh') as 'zh' | 'en'
   const locale = useStorage<'zh' | 'en'>('langchat-slides-locale', defaultLocale)
-  
+
   // Defaults to Dark Mode
   const isDark = useDark({
     selector: 'html',
@@ -29,7 +29,7 @@ export const useAppStore = defineStore('app-store', () => {
   const apiKey = useStorage('langchat-slides-apikey-v1', defaultApiKey)
   const baseUrl = useStorage('langchat-slides-baseurl-v1', defaultBaseUrl)
   const model = useStorage('langchat-slides-model-v1', defaultModel)
-  
+
   // --- Functional State ---
   const messages = ref<Message[]>([])
   const slides = ref<Slide[]>([])
@@ -38,10 +38,13 @@ export const useAppStore = defineStore('app-store', () => {
   const slideRenderMode = ref<'replace' | 'append'>('replace')
   const showCodeEditor = ref(false)
   const exportRequest = ref<{ format: 'png' | 'svg' | 'pdf' } | null>(null)
-  
+
+  // Canvas State
+  const canvasScale = ref(1.0)
+
   // Store the Infographic instance
   const infographic = shallowRef<Infographic | null>(null)
-  
+
   // --- Theme/Style State ---
   const currentTheme = useStorage<'default' | 'dark'>('langchat-slides-theme-v2', 'default')
   const currentPalette = useStorage<string>('langchat-slides-palette-v2', 'default')
@@ -97,25 +100,25 @@ export const useAppStore = defineStore('app-store', () => {
   function toggleLocale() {
     locale.value = locale.value === 'zh' ? 'en' : 'zh'
   }
-  
+
   function toggleTheme() {
     console.log('🔄 Toggling theme from', currentTheme.value)
     currentTheme.value = currentTheme.value === 'default' ? 'dark' : 'default'
     console.log('✅ Theme toggled to', currentTheme.value)
   }
-  
+
   function toggleSketchStyle() {
     console.log('🔄 Toggling sketch style from', sketchStyle.value)
     sketchStyle.value = !sketchStyle.value
     console.log('✅ Sketch style toggled to', sketchStyle.value)
   }
-  
+
   function updatePalette(palette: string) {
     console.log('🔄 Updating palette from', currentPalette.value, 'to', palette)
     currentPalette.value = palette
     console.log('✅ Palette updated to', currentPalette.value)
   }
-  
+
   function updateCustomPalette(colors: string[]) {
     customPalette.value = colors
   }
@@ -133,6 +136,22 @@ export const useAppStore = defineStore('app-store', () => {
 
   function triggerExport(format: 'png' | 'svg' | 'pdf') {
     exportRequest.value = { format }
+  }
+
+  function zoomIn() {
+    if (canvasScale.value < 2.5) {
+      canvasScale.value = Number((canvasScale.value + 0.1).toFixed(1))
+    }
+  }
+
+  function zoomOut() {
+    if (canvasScale.value > 0.5) {
+      canvasScale.value = Number((canvasScale.value - 0.1).toFixed(1))
+    }
+  }
+
+  function resetZoom() {
+    canvasScale.value = 1.0
   }
 
   return {
@@ -169,6 +188,10 @@ export const useAppStore = defineStore('app-store', () => {
     setSlides,
     appendSlides,
     clearSlides,
-    palettes
+    palettes,
+    canvasScale,
+    zoomIn,
+    zoomOut,
+    resetZoom
   }
 })

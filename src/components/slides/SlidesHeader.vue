@@ -21,10 +21,29 @@ import {
   Check,
   Code,
   FileImage,
-  FileText
+  FileText,
+  ZoomIn,
+  ZoomOut,
+  Maximize,
+  Minimize,
+  Maximize2,
+  Minimize2,
+  MoreVertical,
+  Settings,
+  Archive,
+  Eye,
+  Settings2
 } from 'lucide-vue-next'
 import {useI18n} from '@/composables/useI18n'
 import CustomSlideDialog from '@/components/layout/CustomSlideDialog.vue'
+
+const props = defineProps<{
+  isFullscreen: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'toggleFullscreen'): void
+}>()
 
 const store = useAppStore()
 const { t } = useI18n()
@@ -74,9 +93,9 @@ const { t } = useI18n()
 
       <!-- Palette Selector -->
       <Select :model-value="store.currentPalette" @update:model-value="(v) => store.updatePalette(v as string)">
-        <SelectTrigger class="h-8 w-[140px]">
-          <Palette class="h-4 w-4" />
-          <SelectValue placeholder="Palette" />
+        <SelectTrigger class="h-8 w-[120px] px-2 gap-2">
+          <Palette class="h-3.5 w-3.5 shrink-0" />
+          <SelectValue placeholder="Palette" class="text-xs truncate" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem v-for="palette in store.palettes" :key="palette.name" :value="palette.name">
@@ -91,10 +110,6 @@ const { t } = useI18n()
               </div>
               <span class="capitalize">{{ palette.name }}</span>
             </div>
-            <Check 
-              v-if="store.currentPalette === palette.name"
-              class="h-3.5 w-3.5 text-primary ml-2"
-            />
           </SelectItem>
           <SelectItem value="custom">
             <div class="flex items-center gap-2 flex-1">
@@ -108,67 +123,115 @@ const { t } = useI18n()
               </div>
               <span>Custom</span>
             </div>
-            <Check 
-              v-if="store.currentPalette === 'custom'"
-              class="h-3.5 w-3.5 text-primary ml-2"
-            />
           </SelectItem>
         </SelectContent>
       </Select>
 
       <div class="w-px h-4 bg-border/50 mx-1"></div>
 
-      <CustomSlideDialog />
-      
-      <Button 
-         :title="store.slideRenderMode === 'replace' ? t('currentReplaceMode').value : t('currentAppendMode').value"
-         class="h-8 gap-2"
-         size="sm"
-         variant="ghost"
-         @click="store.slideRenderMode = store.slideRenderMode === 'replace' ? 'append' : 'replace'"
-      >
-         <RefreshCw v-if="store.slideRenderMode === 'replace'" class="h-4 w-4" />
-         <ListPlus v-else class="h-4 w-4" />
-         <span class="text-xs">{{ store.slideRenderMode === 'replace' ? t('replaceMode').value : t('appendMode').value }}</span>
-      </Button>
+      <!-- Zoom Controls -->
+      <div class="flex items-center gap-1 bg-muted/30 rounded-lg p-0.5 border border-border/50">
+        <Button
+          title="Zoom Out"
+          class="h-7 w-7"
+          size="icon"
+          variant="ghost"
+          :disabled="store.canvasScale <= 0.5"
+          @click="store.zoomOut()"
+        >
+          <ZoomOut class="h-3.5 w-3.5" />
+        </Button>
+        <span class="text-[10px] font-medium w-9 text-center tabular-nums">
+          {{ Math.round(store.canvasScale * 100) }}%
+        </span>
+        <Button
+          title="Zoom In"
+          class="h-7 w-7"
+          size="icon"
+          variant="ghost"
+          :disabled="store.canvasScale >= 2.5"
+          @click="store.zoomIn()"
+        >
+          <ZoomIn class="h-3.5 w-3.5" />
+        </Button>
+      </div>
 
-      <Button 
-        :title="t('clearAllSlides').value"
-        class="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+      <div class="w-px h-4 bg-border/50 mx-1"></div>
+
+      <!-- Fullscreen Toggle -->
+      <Button
+        :title="props.isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'"
+        class="h-8 w-8"
         size="icon"
         variant="ghost"
-        @click="store.clearSlides"
+        @click="emit('toggleFullscreen')"
       >
-        <Trash2 class="h-4 w-4" />
+        <Minimize2 v-if="props.isFullscreen" class="h-4 w-4" />
+        <Maximize2 v-else class="h-4 w-4" />
       </Button>
-      
+
       <div class="w-px h-4 bg-border/50 mx-1"></div>
 
       <!-- Export Dropdown -->
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
-          <Button variant="ghost" size="sm" class="h-8 gap-2">
-            <Download class="h-4 w-4" />
+          <Button variant="ghost" size="sm" class="h-8 gap-2 px-3 hover:bg-muted font-medium">
+            <Download class="h-3.5 w-3.5" />
             <span class="text-xs">{{ t('exportFormat').value }}</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent align="end" class="w-40">
           <DropdownMenuItem class="cursor-pointer" @click="store.triggerExport('png')">
             <div class="flex items-center gap-2">
-              <FileImage class="h-3.5 w-3.5" />
+              <FileImage class="h-3.5 w-3.5 text-muted-foreground" />
               <span>{{ t('exportPng').value }}</span>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem class="cursor-pointer" @click="store.triggerExport('svg')">
             <div class="flex items-center gap-2">
-              <FileText class="h-3.5 w-3.5" />
+              <FileText class="h-3.5 w-3.5 text-muted-foreground" />
               <span>{{ t('exportSvg').value }}</span>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem class="cursor-pointer" @click="store.triggerExport('pdf')">
             <div class="flex items-center gap-2">
-              <Image class="h-3.5 w-3.5" />
+              <Image class="h-3.5 w-3.5 text-muted-foreground" />
               <span>{{ t('exportPdf').value }}</span>
+            </div>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <div class="w-px h-4 bg-border/50 mx-1"></div>
+
+      <!-- More Actions Dropdown -->
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Button variant="ghost" size="icon" class="h-8 w-8 hover:bg-muted">
+            <Settings2 class="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" class="w-56">
+          <CustomSlideDialog />
+          
+          <DropdownMenuItem class="cursor-pointer" @click="store.slideRenderMode = store.slideRenderMode === 'replace' ? 'append' : 'replace'">
+            <div class="flex items-center justify-between w-full">
+              <div class="flex items-center gap-2">
+                <RefreshCw v-if="store.slideRenderMode === 'replace'" class="h-3.5 w-3.5 text-muted-foreground" />
+                <ListPlus v-else class="h-3.5 w-3.5 text-muted-foreground" />
+                <span>{{ store.slideRenderMode === 'replace' ? t('replaceMode').value : t('appendMode').value }}</span>
+              </div>
+              <span class="text-[10px] text-muted-foreground bg-muted px-1.5 rounded">{{ store.slideRenderMode }}</span>
+            </div>
+          </DropdownMenuItem>
+
+          <div class="my-1 border-t border-border/50"></div>
+
+          <!-- Dangerous Actions -->
+          <DropdownMenuItem class="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10" @click="store.clearSlides">
+            <div class="flex items-center gap-2">
+              <Trash2 class="h-3.5 w-3.5" />
+              <span>{{ t('clearAllSlides').value }}</span>
             </div>
           </DropdownMenuItem>
         </DropdownMenuContent>

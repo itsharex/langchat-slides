@@ -243,7 +243,7 @@ watch(
         :style="{
           width: `${BASE_WIDTH}px`,
           height: `${BASE_HEIGHT}px`,
-          transform: `scale(${scale})`
+          transform: `scale(${scale * store.canvasScale})`
         }"
         class="origin-center transition-transform duration-200"
       ></div>

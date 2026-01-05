@@ -118,6 +118,7 @@ function reRender() {
         content: body,
         syntax: body
       }
+      console.log('ChatMEssage', slide)
       return slide
     })
     
@@ -190,7 +191,7 @@ function reRender() {
         </div>
       </div>
       
-      <!-- Copy and Re-render Buttons for slide content -->
+      <!-- Copy and Re-render Buttons for assistant slide content -->
       <Transition name="fade">
         <div 
           v-if="message.role === 'assistant' && props.message.content && props.message.content.includes('[slide]')"
@@ -216,6 +217,26 @@ function reRender() {
           >
             <RefreshCw class="h-3 w-3" />
             <span>Re-render</span>
+          </Button>
+        </div>
+      </Transition>
+
+      <!-- Copy Button for user messages -->
+      <Transition name="fade">
+        <div 
+          v-if="message.role === 'user' && props.message.content"
+          class="mt-1 flex justify-end"
+        >
+          <Button 
+           class="h-7 text-xs gap-1.5 hover:bg-primary/10"
+            size="sm" 
+            title="Copy text"
+            variant="ghost"
+            @click="copyText"
+          >
+            <Check v-if="isCopied" class="h-2.5 w-2.5" />
+            <Copy v-else class="h-2.5 w-2.5" />
+            <span>{{ isCopied ? 'Copied' : 'Copy' }}</span>
           </Button>
         </div>
       </Transition>

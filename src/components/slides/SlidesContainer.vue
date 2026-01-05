@@ -5,9 +5,14 @@ import SlidesHeader from './SlidesHeader.vue'
 import SlidesCanvas from './SlidesCanvas.vue'
 import {LayoutTemplate, PlusCircle} from 'lucide-vue-next'
 import {useI18n} from '@/composables/useI18n'
+import {useFullscreen} from '@vueuse/core'
+import {ref} from 'vue'
 
 const store = useAppStore()
 const { t } = useI18n()
+
+const containerRef = ref<HTMLElement | null>(null)
+const { isFullscreen, toggle } = useFullscreen(containerRef)
 </script>
 
 <template>
@@ -40,9 +45,12 @@ const { t } = useI18n()
     </div>
 
     <!-- Main Area -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden relative bg-card">
+    <div ref="containerRef" class="flex-1 flex flex-col h-full overflow-hidden relative bg-card">
       <!-- Toolbar -->
-      <SlidesHeader />
+      <SlidesHeader 
+        :isFullscreen="isFullscreen" 
+        @toggleFullscreen="toggle" 
+      />
 
       <!-- Preview -->
       <SlidesCanvas />

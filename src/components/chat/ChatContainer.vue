@@ -48,7 +48,7 @@ function scrollToBottom() {
 
 watch(() => store.messages.length, scrollToBottom)
 
-async function handleSendMessage(content: string) {
+async function handleSendMessage(content: string, theme?: string) {
   if (!content.trim() || store.isStreaming) return
 
   // Add user message
@@ -79,7 +79,7 @@ async function handleSendMessage(content: string) {
       model: store.model
     }
 
-    const stream = streamChat(store.messages.filter(m => m.id !== aiMsgId), config)
+    const stream = streamChat(store.messages.filter(m => m.id !== aiMsgId), config, theme)
 
     for await (const chunk of stream) {
       fullContent += chunk
@@ -127,6 +127,9 @@ function parseSlides(content: string, initialSlides: Slide[] = []) {
         id: `slide-${globalIndex}`, // Stable ID
         content: body,
         syntax: body
+      }
+      if (store.infographic != null) {
+        slide.title = store.infographic.getOptions().data!.title || 'Untitled'
       }
       return slide
     })
