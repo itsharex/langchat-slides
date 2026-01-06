@@ -34,10 +34,11 @@ watch(
     
     try {
       const options = infographic.getOptions()
-      if (options?.data?.title && store.slides[store.currentSlideIndex]) {
+      const currentSlide = store.slides[store.currentSlideIndex]
+      if (options?.data?.title && currentSlide) {
         // Only update if title is different
-        if (store.slides[store.currentSlideIndex].title !== options.data.title) {
-          store.slides[store.currentSlideIndex].title = options.data.title
+        if (currentSlide.title !== options.data.title) {
+          currentSlide.title = options.data.title
           console.log(`SlidePreview: Updated title for slide ${props.id}:`, options.data.title)
         }
       }

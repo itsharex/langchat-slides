@@ -36,7 +36,7 @@ export const useAppStore = defineStore('app-store', () => {
   const isStreaming = ref(false)
   const slideRenderMode = ref<'replace' | 'append'>('replace')
   const inputPrompt = ref('')
-  const exportRequest = ref<{ format: 'png' | 'svg' | 'pdf' } | null>(null)
+  const exportRequest = ref<{ format: 'png' | 'svg' | 'pdf' | 'pptx' } | null>(null)
 
   // Canvas State
   const canvasScale = ref(1.0)
@@ -133,7 +133,7 @@ export const useAppStore = defineStore('app-store', () => {
     currentSlideIndex.value = slides.value.length - 1
   }
 
-  function triggerExport(format: 'png' | 'svg' | 'pdf') {
+  function triggerExport(format: 'png' | 'svg' | 'pdf' | 'pptx') {
     exportRequest.value = { format }
   }
 
